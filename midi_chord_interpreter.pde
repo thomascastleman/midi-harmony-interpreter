@@ -1,4 +1,8 @@
 
+/*
+  midi_chord_interpreter.pde :: Basic MIDI listeners and Processing setup
+*/
+
 import themidibus.*;
 
 MidiBus bus;  // midibus interface
@@ -25,6 +29,17 @@ void printActiveTones() {
   }
 }
 
+// update the on-screen display of current harmonic interpretations
+void updateInterpretationDisplay() {
+  // interpret the active tones
+  String[] chordNames = interpret(activeTones);
+  
+  // for now, log names
+  for (int i = 0; i < chordNames.length; i++) {
+    println(chordNames[i]);
+  }
+}
+
 // convert a MIDI pitch number to its tone index (A --> 0, A# --> 1, ...)
 int midiPitchToTone(int midiPitch) {
   // 21 is A0; mod by 12 to map all of the tones separated by octaves on to the same tone
@@ -46,6 +61,9 @@ void noteOn(int channel, int pitch, int velocity) {
   if (tone > 0) {
     activeTones[tone]++;
   }
+  
+  //// update the interpretation to reflect new note
+  //updateInterpretationDisplay();
 }
 
 // Receive a noteOff
@@ -63,4 +81,7 @@ void noteOff(int channel, int pitch, int velocity) {
   if (tone > 0 && activeTones[tone] > 0) {
     activeTones[tone]--;
   }
+  
+  //// update the interpretation to reflect removed note
+  //updateInterpretationDisplay();
 }
