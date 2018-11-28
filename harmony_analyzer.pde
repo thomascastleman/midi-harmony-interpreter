@@ -10,7 +10,7 @@ Interpretation[] getInterpretations(int[] tones) {
   
   // generate the actual interpretations
   for (int i = 0; i < interpretations.length; i++) {
-    interpretations[i] = new Interpretation(i, noteNames[i], tones);
+    interpretations[i] = new Interpretation(noteNames[i], i, tones);
   }
   
   return interpretations;

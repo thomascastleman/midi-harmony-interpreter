@@ -15,7 +15,7 @@ void setup() {
   size(500, 500);
   MidiBus.list();  // list available midi devices
   println("");
-  bus = new MidiBus(this, 0, 1);    // init bus
+  bus = new MidiBus(this, 0, 1);  // init bus
 }
 
 void draw() {
@@ -27,11 +27,12 @@ void printActiveTones() {
   for (int i = 0; i < activeTones.length; i++) {
     println(noteNames[i] + ": " + activeTones[i]);
   }
+  println("");
 }
 
 // update the on-screen display of current harmonic interpretations
 void updateInterpretationDisplay() {
-  // interpret the active tones
+  // interpret the active tones into chord names
   String[] chordNames = interpret(activeTones);
   
   // for now, log names
@@ -48,37 +49,38 @@ int midiPitchToTone(int midiPitch) {
 
 // Receive a noteOn
 void noteOn(int channel, int pitch, int velocity) {
-  println();
-  println("Note On:");
-  println("--------");
-  println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
+  //println();
+  //println("Note On:");
+  //println("--------");
+  //println("Channel:"+channel);
+  //println("Pitch:"+pitch);
+  //println("Velocity:"+velocity);
   
   int tone = midiPitchToTone(pitch);  // find tone based on MIDI pitch
   
   // if valid tone, increment count of this tone
-  if (tone > 0) {
+  if (tone >= 0) {
     activeTones[tone]++;
   }
   
+  printActiveTones();
   //// update the interpretation to reflect new note
   //updateInterpretationDisplay();
 }
 
 // Receive a noteOff
 void noteOff(int channel, int pitch, int velocity) {
-  println();
-  println("Note Off:");
-  println("--------");
-  println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
+  //println();
+  //println("Note Off:");
+  //println("--------");
+  //println("Channel:"+channel);
+  //println("Pitch:"+pitch);
+  //println("Velocity:"+velocity);
   
   int tone = midiPitchToTone(pitch);  // find tone based on MIDI pitch
   
-  // if valid tone, decrement count of this tone
-  if (tone > 0 && activeTones[tone] > 0) {
+  // if valid tone with nonzero frequency, decrement count of this tone
+  if (tone >= 0 && activeTones[tone] > 0) {
     activeTones[tone]--;
   }
   
