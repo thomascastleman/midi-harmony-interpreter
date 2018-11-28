@@ -25,19 +25,22 @@ It is because of these restrictions that the degrees are counted in this specifi
 
 class Interpretation {
   
-  int rootIndex;  // index of the root this interpretation is based upon
   String root;  // letter of the root
   int[] degrees = new int[17];  // various scale degrees and their frequencies
   float score;  // metric used to rank interpretations against each other
   
   // construct a new interpretation
-  Interpretation(int _rootIndex, String _root, int[] tones) {
-    // record root index and letter
-    this.rootIndex = _rootIndex;
+  Interpretation(String _root, int rootIndex, int[] tones) {
+    // record root letter
     this.root = _root;
     
+    // interpret the chord here
+    this.generateInterVec(rootIndex, tones);
+  }
+  
+  // fill out the interpretation vector for this root (modifies self.degrees)
+  void generateInterVec(int rootIndex, int[] tones) {
     
-    // -------- interpret the chord here -------------
   }
   
   // return the score of this interpretation
