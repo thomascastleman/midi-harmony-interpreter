@@ -3,8 +3,7 @@
 
   interpretation.pde :: Class to store the basic information encoded by an interpretation of a given set of notes
 
---> the index of the root note being used (A --> 0, A# --> 1, ...)
---> the letter of the root itself (i.e. "D", "Ab", ...)
+--> the letter of the root (i.e. "D", "Ab", ...)
 --> a 17-dimensional vector containing the frequencies of various scale degrees
 
 Scheme of degrees vector is as follows: [1, 3, b3, 7, b7, 5, b5, #5, bb7, b9, 9, #9, 11, #11, b13, 13, #13]
@@ -22,6 +21,42 @@ Some of these degrees are restricted as follows:
 It is because of these restrictions that the degrees are counted in this specific order.
 
 */
+
+// the required shift from the root to get to the corresponding degree (i.e. 4 semitones above root is expected position of major 3rd)
+static final int[] degreeOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 8, 9, 10};
+
+/*
+  The constraints encode the logical implications of choosing to interpret a certain pitch a given way
+  (i.e. interpreting a pitch as a 3 implies there is no b3 -- this would have to be interpreted as a #9)
+  
+  Here, each subarray represents the constraints for a given degree. The contents of the subarray are indices of previous degrees, whose 
+  values have an effect on the interpretation of this degree. 
+  
+  Negative indices indicate that this degree should not be used in the interpretation if any of the degrees at the listed negative indices have been
+  included in the interpretation. (i.e. do not include a b7 in the interpretation if a maj 7 has already been identified--there can only be one 7)
+  
+  Positive indices indicate that this degree should not be used in the interpretation if any of the degrees at the listed positive indices have NOT been
+  included in the interpretation. (i.e. a bb7 requires the full rest of the diminished chord (b3 and b5) to be interpreted as such and not otherwise as a 13)
+*/
+static final int[][] constraints = {
+  {},
+  {},
+  {-1},
+  {},
+  {-3},
+  {},
+  {-1, -3, -5},
+  {-2, -4, -5, -6},
+  {-3, -4, 2, 6},
+  {},
+  {},
+  {-1},
+  {},
+  {-6},
+  {-7},
+  {},
+  {-4},
+};
 
 class Interpretation {
   
