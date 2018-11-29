@@ -19,7 +19,7 @@ void setup() {
   println("");
   bus = new MidiBus(this, 0, 1);  // init bus
   
-  textSize(25);
+  textSize(35);
   background(10);
   fill(255);
   stroke(255);
@@ -30,7 +30,7 @@ void draw() {
   
   // output all current interpretations to screen
   for (int i = 0; i < interpretations.length; i++) {
-    text(interpretations[i], 30, (i + 1) * 30);
+    text(interpretations[i], 30, (i + 1) * 40);
   }
 }
 
