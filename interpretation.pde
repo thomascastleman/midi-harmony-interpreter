@@ -107,7 +107,56 @@ class Interpretation {
   
   // convert a chord interpretation to its corresponding musical name
   String getMusicalName() {
-    return "";
+    // combine root with basic chord quality
+    String name = this.root + this.getChordQuality();
+    
+    
+    return name;
+  }
+  
+  // get the basic chord quality of this interpretation
+  String getChordQuality() {
+    // if has b7
+    if (this.degrees[4] > 0) {
+      // if has b3
+      if (this.degrees[2] > 0) {
+        // if has b5
+        if (this.degrees[6] > 0) {
+          return "-7b5";  // half diminished
+        } else {
+          return "-7";  // minor seventh
+        }
+      } else {
+        return "7";  // dominant seventh
+      }
+      
+    // otherwise if has maj7
+    } else if (this.degrees[3] > 0) {
+      // if has b3
+      if (this.degrees[2] > 0) {
+        return "-Δ7";  // minor major seventh
+      } else if (this.degrees[7] > 0) {
+        return "+Δ7";  // augmented major seventh
+      } else {
+        return "Δ7";  // major seventh
+      }
+      
+    // otherwise if has b5
+    } else if (this.degrees[6] > 0) {
+      return "dim";
+    
+    // otherwise if has #5
+    } else if (this.degrees[7] > 0) {
+      return "+";
+      
+    // otherwise if has b3
+    } else if (this.degrees[2] > 0) {
+      return "-";
+    
+    // if none of these features are identified, we can't say anything specific about chord quality
+    } else {
+      return "";
+    }
   }
   
   

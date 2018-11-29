@@ -24,19 +24,23 @@ void setup() {
     1,  // Bb
     0,  // B
     0,  // C
-    2,  // Db
+    0,  // Db
     5,  // D
     2,  // Eb
     1,  // E
-    0,  // F
+    1,  // F
     0,  // F#
     3,   // G
     0  // Ab
   };
   
-  Interpretation inter = new Interpretation("Eb", 6, active);
+  Interpretation inter = new Interpretation("A", 0, active);
   
   inter.logInterpretation();
+  
+  println(inter.getMusicalName());
+  
+  
   
   
   
@@ -82,11 +86,11 @@ void noteOn(int channel, int pitch, int velocity) {
   //println("Pitch:"+pitch);
   //println("Velocity:"+velocity);
   
-  int tone = midiPitchToTone(pitch);  // find tone based on MIDI pitch
+  int toneIndex = midiPitchToTone(pitch);  // find tone based on MIDI pitch
   
   // if valid tone, increment count of this tone
-  if (tone >= 0) {
-    activeTones[tone]++;
+  if (toneIndex >= 0) {
+    activeTones[toneIndex]++;
   }
   
   printActiveTones();
@@ -103,11 +107,11 @@ void noteOff(int channel, int pitch, int velocity) {
   //println("Pitch:"+pitch);
   //println("Velocity:"+velocity);
   
-  int tone = midiPitchToTone(pitch);  // find tone based on MIDI pitch
+  int toneIndex = midiPitchToTone(pitch);  // find tone based on MIDI pitch
   
   // if valid tone with nonzero frequency, decrement count of this tone
-  if (tone >= 0 && activeTones[tone] > 0) {
-    activeTones[tone]--;
+  if (toneIndex >= 0 && activeTones[toneIndex] > 0) {
+    activeTones[toneIndex]--;
   }
   
   //// update the interpretation to reflect removed note
