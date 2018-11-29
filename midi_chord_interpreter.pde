@@ -19,26 +19,26 @@ void setup() {
   
   
   
-  int[] active = {
-    0,  // A
-    1,  // Bb
-    0,  // B
-    0,  // C
-    0,  // Db
-    5,  // D
-    2,  // Eb
-    1,  // E
-    1,  // F
-    0,  // F#
-    3,   // G
-    0  // Ab
-  };
+  //int[] active = {
+  //  1,  // A
+  //  1,  // Bb
+  //  1,  // B
+  //  1,  // C
+  //  1,  // Db
+  //  1,  // D
+  //  1,  // Eb
+  //  1,  // E
+  //  1,  // F
+  //  1,  // F#
+  //  1,   // G
+  //  1  // Ab
+  //};
   
-  Interpretation inter = new Interpretation("A", 0, active);
+  //Interpretation inter = new Interpretation("C", 3, active);
   
-  inter.logInterpretation();
+  //inter.logInterpretation();
   
-  println(inter.getMusicalName());
+  //println(inter.getMusicalName());
   
   
   
@@ -94,8 +94,8 @@ void noteOn(int channel, int pitch, int velocity) {
   }
   
   printActiveTones();
-  //// update the interpretation to reflect new note
-  //updateInterpretationDisplay();
+  // update the interpretation to reflect new note
+  updateInterpretationDisplay();
 }
 
 // Receive a noteOff
@@ -114,6 +114,6 @@ void noteOff(int channel, int pitch, int velocity) {
     activeTones[toneIndex]--;
   }
   
-  //// update the interpretation to reflect removed note
-  //updateInterpretationDisplay();
+  // update the interpretation to reflect removed note
+  updateInterpretationDisplay();
 }

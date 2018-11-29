@@ -22,6 +22,8 @@ It is because of these restrictions that the degrees are counted in this specifi
 
 */
 
+String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "b9", "9", "#9", "11", "#11", "b13", "13", "#13"};
+
 // the required shift from the root to get to the corresponding degree (i.e. 4 semitones above root is expected position of major 3rd)
 static final int[] degreeOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 8, 9, 10};
 
@@ -54,7 +56,7 @@ static final int[][] constraints = {
   {},                // for 11
   {-6},              // for #11
   {-7},              // for b13
-  {},                // for 13
+  {-8},                // for 13
   {-4},              // for #13
 };
 
@@ -110,8 +112,16 @@ class Interpretation {
     // combine root with basic chord quality
     String name = this.root + this.getChordQuality();
     
+    String ext = "";
     
-    return name;
+    // for the remaining extensions
+    for (int i = 9; i < 17; i++) {
+      if (this.degrees[i] > 0) {
+        ext += " " + degreeNames[i];
+      }
+    }
+    
+    return name + ext;
   }
   
   // get the basic chord quality of this interpretation
@@ -143,15 +153,15 @@ class Interpretation {
       
     // otherwise if has b5
     } else if (this.degrees[6] > 0) {
-      return "dim";
+      return "dim";  // diminished
     
     // otherwise if has #5
     } else if (this.degrees[7] > 0) {
-      return "+";
+      return "+";  // augmented
       
     // otherwise if has b3
     } else if (this.degrees[2] > 0) {
-      return "-";
+      return "-";  // minor
     
     // if none of these features are identified, we can't say anything specific about chord quality
     } else {
@@ -167,7 +177,6 @@ class Interpretation {
   
   // log interpretation vector in human-readable format
   void logInterpretation() {
-    String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "b9", "9", "#9", "11", "#11", "b13", "13", "#13"};
     for (int i = 0; i < this.degrees.length; i++) {
       println(degreeNames[i] + ": " + this.degrees[i]);
     }
