@@ -17,7 +17,7 @@ void setup() {
   println("");
   bus = new MidiBus(this, 0, 1);  // init bus
   
-  
+  textSize(25);
   
   //int[] active = {
   //  1,  // A
@@ -35,21 +35,14 @@ void setup() {
   //};
   
   //Interpretation inter = new Interpretation("C", 3, active);
-  
   //inter.logInterpretation();
-  
   //println(inter.getMusicalName());
   
-  
-  
-  
-  
-  
-  
+  background(10);
 }
 
 void draw() {
-  background(50);
+  //updateInterpretationDisplay();
 }
 
 // log the currently active tones vector
@@ -65,9 +58,13 @@ void updateInterpretationDisplay() {
   // interpret the active tones into chord names
   String[] chordNames = interpret(activeTones);
   
+  background(50);
+  println("Changed background");
+  
   // for now, log names
   for (int i = 0; i < chordNames.length; i++) {
-    println(chordNames[i]);
+    // working on making this text appear 
+    text(chordNames[i], 50, (i + 1) * 35);
   }
 }
 
@@ -92,8 +89,7 @@ void noteOn(int channel, int pitch, int velocity) {
   if (toneIndex >= 0) {
     activeTones[toneIndex]++;
   }
-  
-  printActiveTones();
+
   // update the interpretation to reflect new note
   updateInterpretationDisplay();
 }

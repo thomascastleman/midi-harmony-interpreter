@@ -16,6 +16,7 @@ Some of these degrees are restricted as follows:
   --> #9 only if NOT b3
   --> #11 only if NOT b5
   --> b13 only if NOT #5
+  --> 13 only if NOT bb7
   --> #13 only if NOT b7
   
 It is because of these restrictions that the degrees are counted in this specific order.
@@ -56,7 +57,7 @@ static final int[][] constraints = {
   {},                // for 11
   {-6},              // for #11
   {-7},              // for b13
-  {-8},                // for 13
+  {-8},              // for 13
   {-4},              // for #13
 };
 
@@ -102,19 +103,12 @@ class Interpretation {
     }
   }
   
-  // return the score of this interpretation
-  float getScore() {
-    return 0.0;
-  }
-  
   // convert a chord interpretation to its corresponding musical name
   String getMusicalName() {
-    // combine root with basic chord quality
-    String name = this.root + this.getChordQuality();
+    String name = this.root + this.getChordQuality();  // combine root with basic chord quality
+    String ext = "";  // prepare to gather extensions
     
-    String ext = "";
-    
-    // for the remaining extensions
+    // for the remaining extensions, simply add their degree names
     for (int i = 9; i < 17; i++) {
       if (this.degrees[i] > 0) {
         ext += " " + degreeNames[i];
@@ -167,6 +161,11 @@ class Interpretation {
     } else {
       return "";
     }
+  }
+  
+  // return the score of this interpretation
+  float getScore() {
+    return 0.0;
   }
   
   
