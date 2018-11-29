@@ -16,6 +16,32 @@ void setup() {
   MidiBus.list();  // list available midi devices
   println("");
   bus = new MidiBus(this, 0, 1);  // init bus
+  
+  
+  
+  int[] active = {
+    0,  // A
+    1,  // Bb
+    0,  // B
+    0,  // C
+    2,  // Db
+    5,  // D
+    2,  // Eb
+    1,  // E
+    0,  // F
+    0,  // F#
+    3,   // G
+    0  // Ab
+  };
+  
+  Interpretation inter = new Interpretation("Eb", 6, active);
+  
+  inter.logInterpretation();
+  
+  
+  
+  
+  
 }
 
 void draw() {

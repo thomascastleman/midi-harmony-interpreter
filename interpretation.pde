@@ -39,23 +39,23 @@ static final int[] degreeOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 
   included in the interpretation. (i.e. a bb7 requires the full rest of the diminished chord (b3 and b5) to be interpreted as such and not otherwise as a 13)
 */
 static final int[][] constraints = {
-  {},
-  {},
-  {-1},
-  {},
-  {-3},
-  {},
-  {-1, -3, -5},
-  {-2, -4, -5, -6},
-  {-3, -4, 2, 6},
-  {},
-  {},
-  {-1},
-  {},
-  {-6},
-  {-7},
-  {},
-  {-4},
+  {},                // for 1
+  {},                // for 3
+  {-1},              // for b3
+  {},                // for 7
+  {-3},              // for b7
+  {},                // for 5
+  {-1, -3, -5},      // for b5
+  {-2, -4, -5, -6},  // for #5
+  {-3, -4, 2, 6},    // for bb7
+  {},                // for b9
+  {},                // for 9
+  {-2},              // for #9
+  {},                // for 11
+  {-6},              // for #11
+  {-7},              // for b13
+  {},                // for 13
+  {-4},              // for #13
 };
 
 class Interpretation {
@@ -73,9 +73,31 @@ class Interpretation {
     this.generateInterVec(rootIndex, tones);
   }
   
-  // fill out the interpretation vector for this root (modifies self.degrees)
+  // fill out the interpretation vector for given tones based on the root this interpretation is using (modifies this.degrees)
   void generateInterVec(int rootIndex, int[] tones) {
-    
+    // for each possible degree
+    for (int i = 0; i < this.degrees.length; i++) {
+      int j = (rootIndex + degreeOffsets[i]) % 12;  // find what tone corresponds with this degree
+      
+      // if this is an active tone
+      if (tones[j] > 0) {
+        boolean violates = false;
+        
+        // for each constraint on this degree
+        for (int c : constraints[i]) {
+          // if fails positive or negative constraint
+          if ((c < 0 && this.degrees[Math.abs(c)] != 0) || (c > 0 && this.degrees[c] == 0)) {
+            violates = true;
+            break;
+          }
+        }
+        
+        // if passed all constraints, accept interpretation
+        if (!violates) {
+          this.degrees[i] = tones[j];
+        }
+      }
+    }
   }
   
   // return the score of this interpretation
@@ -86,6 +108,21 @@ class Interpretation {
   // convert a chord interpretation to its corresponding musical name
   String getMusicalName() {
     return "";
+  }
+  
+  
+  
+  
+  
+  // ------------- debug ----------
+  
+  // log interpretation vector in human-readable format
+  void logInterpretation() {
+    String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "b9", "9", "#9", "11", "#11", "b13", "13", "#13"};
+    for (int i = 0; i < this.degrees.length; i++) {
+      println(degreeNames[i] + ": " + this.degrees[i]);
+    }
+    println("");
   }
   
 }
