@@ -23,7 +23,7 @@ It is because of these restrictions that the degrees are counted in this specifi
 
 */
 
-String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "b9", "9", "(#9)", "11", "(#11)", "(b13)", "13", "(#13)"};
+String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "(b9)", "9", "(#9)", "11", "(#11)", "(b13)", "13", "(#13)"};
 
 // the required shift from the root to get to the corresponding degree (i.e. 4 semitones above root is expected position of major 3rd)
 static final int[] degreeOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 8, 9, 10};
@@ -48,7 +48,7 @@ static final int[][] constraints = {
   {},                // for 7
   {-3},              // for b7
   {},                // for 5
-  {-1, -3, -5},      // for b5
+  {-1, -3, -5, 2},   // for b5
   {-2, -4, -5, -6},  // for #5
   {-3, -4, 2, 6},    // for bb7
   {},                // for b9

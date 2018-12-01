@@ -19,5 +19,7 @@ String[] interpret(int[] tones) {
     // ----- calculate score here ----------
   }
   
+  interpretations[8].logInterpretation();
+  
   return orderedNames;
 }
