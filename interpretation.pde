@@ -61,10 +61,23 @@ static final int[][] constraints = {
   {-4},              // for #13
 };
 
+// encodes the indices of extensions that are unlikely to occur over each chord quality (used to rank interpretations)
+int[][] unlikelyExtensions = {
+  {9, 11, 12, 14, 16},  // maj / maj7: b9, #9, 11, b13, #13
+  {9, 13, 14, 15},      // min / min7: b9, #11, b13, 13
+  {},                   // dominant 7: none
+  {9, 10, 15},          // -7b5: b9, 9, 13
+  {9, 10, 12, 14},      // dim: b9, 9, 11, b13
+  {9, 12, 15},          // aug: b9, 11, 13
+  {9, 13, 14, 16},      // minmaj7: b9, #11, b13, #13
+  {9, 11, 12, 15, 16}   // augmaj7: b9, #9, 11, 13, #13
+};
+
 class Interpretation {
   
   String root;  // letter of the root
   int[] degrees = new int[17];  // various scale degrees and their frequencies
+  String chordQuality;  // i.e. "maj7", "dim"
   float score;  // metric used to rank interpretations against each other
   
   // construct a new interpretation
@@ -114,58 +127,92 @@ class Interpretation {
         ext += " " + degreeNames[i];
       }
     }
-    
+
     return name + ext;
   }
   
   // get the basic chord quality of this interpretation
   String getChordQuality() {
-    // if has b7
-    if (this.degrees[4] > 0) {
-      // if has b3
-      if (this.degrees[2] > 0) {
-        // if has b5
-        if (this.degrees[6] > 0) {
-          return "-7b5";  // half diminished
+    if (this.chordQuality == null) {
+      // if has b7
+      if (this.degrees[4] > 0) {
+        // if has b3
+        if (this.degrees[2] > 0) {
+          // if has b5
+          if (this.degrees[6] > 0) {
+            this.chordQuality = "-7b5";  // half diminished
+          } else {
+            this.chordQuality = "-7";  // minor seventh
+          }
         } else {
-          return "-7";  // minor seventh
+          this.chordQuality = "7";  // dominant seventh
         }
-      } else {
-        return "7";  // dominant seventh
-      }
+        
+      // otherwise if has maj7
+      } else if (this.degrees[3] > 0) {
+        // if has b3
+        if (this.degrees[2] > 0) {
+          this.chordQuality = "-Δ7";  // minor major seventh
+        } else if (this.degrees[7] > 0) {
+          this.chordQuality = "+Δ7";  // augmented major seventh
+        } else {
+          this.chordQuality = "Δ7";  // major seventh
+        }
+        
+      // otherwise if has b5
+      } else if (this.degrees[6] > 0) {
+        this.chordQuality = "dim";  // diminished
       
-    // otherwise if has maj7
-    } else if (this.degrees[3] > 0) {
-      // if has b3
-      if (this.degrees[2] > 0) {
-        return "-Δ7";  // minor major seventh
+      // otherwise if has #5
       } else if (this.degrees[7] > 0) {
-        return "+Δ7";  // augmented major seventh
+        this.chordQuality = "+";  // augmented
+        
+      // otherwise if has b3
+      } else if (this.degrees[2] > 0) {
+        this.chordQuality = "-";  // minor
+      
+      // if none of these features are identified, we can't say anything specific about chord quality
       } else {
-        return "Δ7";  // major seventh
+        this.chordQuality = "";
       }
-      
-    // otherwise if has b5
-    } else if (this.degrees[6] > 0) {
-      return "dim";  // diminished
-    
-    // otherwise if has #5
-    } else if (this.degrees[7] > 0) {
-      return "+";  // augmented
-      
-    // otherwise if has b3
-    } else if (this.degrees[2] > 0) {
-      return "-";  // minor
-    
-    // if none of these features are identified, we can't say anything specific about chord quality
-    } else {
-      return "";
     }
+    
+    return this.chordQuality;
   }
   
   // return the score of this interpretation
   float getScore() {
-    return 0.0;
+    
+    int threeCount = max(this.degrees[1], this.degrees[2]);  // get frequency of the third identified in this interpretation (if any)
+    int sevenCount = max(this.degrees[3], this.degrees[4], this.degrees[8]);  // get frequency of the seventh identified in this interpretation (if any)
+    
+    this.score = threeCount + sevenCount;
+    
+    // get the index to find out which extensions are unlikely to occur on this chord
+    int qualityIndex = 0;
+    switch (this.getChordQuality()) {
+      case "":      qualityIndex = 0; break;
+      case "Δ7":    qualityIndex = 0; break;
+      case "-":     qualityIndex = 1; break;
+      case "-7":    qualityIndex = 1; break; 
+      case "7":     qualityIndex = 2; break;
+      case "-7b5":  qualityIndex = 3; break;
+      case "dim":   qualityIndex = 4; break;
+      case "+":     qualityIndex = 5; break;
+      case "-Δ7":   qualityIndex = 6; break;
+      case "+Δ7":   qualityIndex = 7; break;
+    }
+    
+    int[] ext = unlikelyExtensions[qualityIndex];  // get the unlikely extensions for this chord quality
+    
+    // subtract one for every unlikely extension that appears in this interpretation
+    for (int i = 0; i < ext.length; i++) {
+      if (this.degrees[ext[i]] > 0) {
+        this.score--;
+      }
+    }
+    
+    return this.score;
   }
   
   

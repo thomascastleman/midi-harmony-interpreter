@@ -10,7 +10,6 @@ MidiBus bus;  // midibus interface
 static final int CHANNEL = 0;  // channel constant
 int[] activeTones = new int[12];  // vector containing counts of tones currently being played
 static final String[] noteNames = {"A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"};  // note names in the order in which they occur in the activeTones vector
-
 String[] interpretations = noteNames;  // initialize interpretations as just note names
 
 void setup() {
@@ -19,7 +18,7 @@ void setup() {
   println("");
   bus = new MidiBus(this, 0, 1);  // init bus
   
-  textSize(35);
+  textSize(25);
   background(10);
   fill(255);
   stroke(255);
@@ -30,17 +29,9 @@ void draw() {
   
   // output all current interpretations to screen
   for (int i = 0; i < interpretations.length; i++) {
-    text(interpretations[i], 30, (i + 1) * 40);
+    text(interpretations[i], 100, (i + 1) * 40);
   }
 }
-
-//// log the currently active tones vector
-//void printActiveTones() {
-//  for (int i = 0; i < activeTones.length; i++) {
-//    println(noteNames[i] + ": " + activeTones[i]);
-//  }
-//  println("");
-//}
 
 // update the interpretation of the current set of notes
 void updateInterpretation() {
