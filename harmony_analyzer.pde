@@ -10,7 +10,6 @@ String[] interpret(int[] tones) {
   Interpretation[] interpretations = new Interpretation[12];
   ArrayList<Interpretation> orderedInter = new ArrayList<Interpretation>();  // alloc new list for sorting interpretations
   
-  
   // generate the interpretation vectors for each key
   for (int i = 0; i < interpretations.length; i++) {
     interpretations[i] = new Interpretation(noteNames[i], i, tones);  // construct new interpretation from this key center

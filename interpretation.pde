@@ -223,6 +223,7 @@ class Interpretation {
   
   // log interpretation vector in human-readable format
   void logInterpretation() {
+    println("Root: " + this.root);
     for (int i = 0; i < this.degrees.length; i++) {
       println(degreeNames[i] + ": " + this.degrees[i]);
     }
