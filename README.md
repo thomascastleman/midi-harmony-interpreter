@@ -53,3 +53,7 @@ Once sets of intervals relative to each possible root have been identified, thei
 </p>
 
 The tree is traversed by starting at the root and proceeding to the child node whose value is an interval that is present in this interpretation, returning the current node's musical name if it is impossible to traverse to a child node. For instance, if a b7 was present, the leftmost path would be traversed, but if there were no b3 in the interpretation, then "7" would be returned as the proper chord quality.
+
+### Further Reading
+
+For a more in-depth, mathematical perspective on this algorithm, check out [An Algorithm for the Interpretation of Jazz Harmony.](http://tcastleman.com/portfolio/An_Algorithm_for_the_Interpretation_of_Jazz_Harmony.pdf)
