@@ -1,7 +1,7 @@
 # midi-harmony-interpreter
 
 
-This harmony interpreter works with MIDI input via [the Midibus library](http://www.smallbutdigital.com/projects/themidibus/) for Processing.
+This harmony interpreter works with MIDI input via [the Midibus library](http://www.smallbutdigital.com/projects/themidibus/) to generate interpretations for the chord quality, extensions, and root of the musical notes being played live.
 
 ## How it works
 Any notes that are played into the connected MIDI instrument are recorded in a array of the twelve possible tones. This array of "active tones" records the frequency at which each note is currently being played. For instance, an active tone array of
@@ -53,6 +53,31 @@ Once sets of intervals relative to each possible root have been identified, thei
 </p>
 
 The tree is traversed by starting at the root and proceeding to the child node whose value is an interval that is present in this interpretation, returning the current node's musical name if it is impossible to traverse to a child node. For instance, if a b7 was present, the leftmost path would be traversed, but if there were no b3 in the interpretation, then "7" would be returned as the proper chord quality.
+
+#### Ranking Interpretations
+
+In order to rank order the interpretations (for the purpose of determining a *most* likely interpretation), each interpretation is given a score based on the presence and absence of each interval class (e.g. all ninths, instead of distinguishing between 9, b9, and #9) as well as the presence of what are deemed to be "unlikely" extensions based on the determined chord quality. 
+
+##### Weights
+To get the initial score, a weighted sum is taken: the presence (denoted 1) or absence (denoted -1) of each interval class in the interpretation is multiplied by its weight (a parameter to the scoring system), and this is added to the sum. 
+
+The weights themselves can be tuned to meet the specific needs of the user. For instance, if an interpreter that tends towards interpreting the input as simple, vanilla voicings is needed, the weights can be adjusted to favor chord tones (1, 3, 5, 7) and disfavor extensions. For an interpreter that tends towards rootless, extended voicings, the weights might be adjusted to favor extensions and disfavor chord tones.
+
+These weights are defined in the `INTERVAL_WEIGHTS[]` array in `interpretation.pde`.
+
+##### Unlikely Extensions
+One point is then subtracted from the score for each extension present that is deemed "unlikely" to fit with this chord quality. These extensions are defined as follows:
+
+```
+Maj / Maj7: b9, #9, 11, b13, #13
+Min / Min7: b9, #11, b13, 13
+Dom 7: none
+Half Dim: b9, 9, 13
+Dim: b9, 9, 11, b13
+Aug: b9, 11, 13
+Minmaj7: b9, #11, b13, #13
+Augmaj7: b9, #9, 11, 13, #13
+```
 
 ### Further Reading
 
