@@ -1,4 +1,6 @@
 
+import java.util.Arrays;
+
 /*
 
   interpretation.pde :: Class to store the basic information encoded by an interpretation of a given set of notes
@@ -72,6 +74,50 @@ int[][] unlikelyExtensions = {
   {9, 13, 14, 16},      // minmaj7: b9, #11, b13, #13
   {9, 11, 12, 15, 16}   // augmaj7: b9, #9, 11, 13, #13
 };
+
+// This is how scoring works.
+// INTERVAL_WEIGHTS assigns weights to the relative importance of each interval's presence in an interpretation
+float[] INTERVAL_WEIGHTS = {
+  0,    // root weight
+  1,    // third weight
+  0.25,    // fifth weight
+  1,    // seventh weight
+  0.5,    // ninth weight
+  0.5,    // eleventh weight
+  0.5     // thirteenth weight
+};
+
+// convert an index in this.degrees to an index in {1, 3, 5, ...}
+int convertIntervalIndex(int i) {
+  // third
+  if (i == 1 || i == 2) {
+    return 1;
+    
+  // fifth
+  } else if (i >= 5 && i <= 7) {
+    return 2;
+    
+  // seventh
+  } else if (i == 3 || i == 4 || i == 8) {
+    return 3;
+  
+  // ninth
+  } else if (i >= 9 && i <= 11) {
+    return 4;
+  
+  // eleventh
+  } else if (i == 12 || i == 13) {
+    return 5;
+    
+  // thirteenth
+  } else if (i >= 14 && i <= 16) {
+    return 6;
+    
+  // root
+  } else {
+    return 0;
+  }
+}
 
 class Interpretation {
   
@@ -182,11 +228,22 @@ class Interpretation {
   
   // return the score of this interpretation
   float getScore() {
+    this.score = 0;
     
-    int threeCount = max(this.degrees[1], this.degrees[2]);  // get frequency of the third identified in this interpretation (if any)
-    int sevenCount = max(this.degrees[3], this.degrees[4], this.degrees[8]);  // get frequency of the seventh identified in this interpretation (if any)
+    int[] intervalPresences = new int[7];
+    Arrays.fill(intervalPresences, -1);
     
-    this.score = threeCount + sevenCount;
+    // determine whether or not each interval is present
+    for (int i = 0; i < this.degrees.length; i++) {
+      if (this.degrees[i] > 0) {
+        intervalPresences[convertIntervalIndex(i)] = 1;
+      }
+    }
+    
+    // take weighted sum of interval presences as score
+    for (int i = 0; i < intervalPresences.length; i++) {
+      this.score += INTERVAL_WEIGHTS[i] * intervalPresences[i];
+    }
     
     // get the index to find out which extensions are unlikely to occur on this chord
     int qualityIndex = 0;
