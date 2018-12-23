@@ -7,21 +7,16 @@ import themidibus.*;
 
 MidiBus bus;  // midibus interface
 
-static final int CHANNEL = 0;  // channel constant
-int[] activeTones = new int[12];  // vector containing counts of tones currently being played
+static final int CHANNEL = 0;  // channel through which MIDI input is coming
 static final String[] noteNames = {"A", "Bb", "B", "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab"};  // note names in the order in which they occur in the activeTones vector
-String[] interpretations = noteNames;  // initialize interpretations as just note names
+int[] activeTones = new int[12];  // vector containing counts of tones currently being played
+String[] interpretations = noteNames;  // initialize chord name interpretations as note names
 
 void setup() {
-  size(500, 500);
+  size(500, 500);  // set size of window to 500x500
+  textSize(25);    // set the font size
   MidiBus.list();  // list available midi devices
-  println("");
   bus = new MidiBus(this, 0, 1);  // init bus
-  
-  textSize(25);
-  background(10);
-  fill(255);
-  stroke(255);
 }
 
 void draw() {
@@ -65,6 +60,7 @@ void orderedInsert(ArrayList<Interpretation> a, Interpretation inter) {
   int k;
   // locate index at which to insert
   for (k = 0; k < a.size(); k++) {
+    // find first interpretation that has a lesser score than the one to insert
     if (a.get(k).score < inter.score) {
       break;
     }

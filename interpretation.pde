@@ -272,20 +272,5 @@ class Interpretation {
     
     return this.score;
   }
-  
-  
-  
-  
-  
-  // ------------- debug ----------
-  
-  // log interpretation vector in human-readable format
-  void logInterpretation() {
-    println("Root: " + this.root);
-    for (int i = 0; i < this.intervals.length; i++) {
-      println(intervalNames[i] + ": " + this.intervals[i]);
-    }
-    println("");
-  }
-  
+
 }
