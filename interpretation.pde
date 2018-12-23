@@ -6,10 +6,10 @@ import java.util.Arrays;
   interpretation.pde :: Class to store the basic information encoded by an interpretation of a given set of notes
 
 --> the letter of the root (i.e. "D", "Ab", ...)
---> a 17-dimensional vector containing the frequencies of various scale degrees
+--> a 17-dimensional vector containing the frequencies of various intervals
 
-Scheme of degrees vector is as follows: [1, 3, b3, 7, b7, 5, b5, #5, bb7, b9, 9, #9, 11, #11, b13, 13, #13]
-Some of these degrees are restricted as follows:
+Scheme of intervals vector is as follows: [1, 3, b3, 7, b7, 5, b5, #5, bb7, b9, 9, #9, 11, #11, b13, 13, #13]
+Some of these intervals are restricted in their interpretation as follows:
   --> b3 only if NOT 3
   --> b7 only if NOT 7
   --> b5 only if NOT 3 and NOT 5 and NOT 7
@@ -20,27 +20,27 @@ Some of these degrees are restricted as follows:
   --> b13 only if NOT #5
   --> 13 only if NOT bb7
   --> #13 only if NOT b7
-  
-It is because of these restrictions that the degrees are counted in this specific order.
+
+It is because of these restrictions that the intervals are counted in this specific order.
 
 */
 
-String[] degreeNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "(b9)", "9", "(#9)", "11", "(#11)", "(b13)", "13", "(#13)"};
+String[] intervalNames = {"1", "3", "b3", "7", "b7", "5", "b5", "#5", "bb7", "(b9)", "9", "(#9)", "11", "(#11)", "(b13)", "13", "(#13)"};
 
-// the required shift from the root to get to the corresponding degree (i.e. 4 semitones above root is expected position of major 3rd)
-static final int[] degreeOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 8, 9, 10};
+// the actual intervals themselves, in semitones (i.e. 4 semitones above root is expected position of major 3rd)
+static final int[] intervalOffsets = {0, 4, 3, 11, 10, 7, 6, 8, 9, 1, 2, 3, 5, 6, 8, 9, 10};
 
 /*
   The constraints encode the logical implications of choosing to interpret a certain pitch a given way
   (i.e. interpreting a pitch as a 3 implies there is no b3 -- this would have to be interpreted as a #9)
   
-  Here, each subarray represents the constraints for a given degree. The contents of the subarray are indices of previous degrees, whose 
-  values have an effect on the interpretation of this degree. 
+  Here, each subarray represents the constraints for a given interval. The contents of the subarray are indices of previous intervals, whose 
+  values have an effect on the interpretation of this note. 
   
-  Negative indices indicate that this degree should not be used in the interpretation if any of the degrees at the listed negative indices have been
+  Negative indices indicate that this interval should not be used in the interpretation if any of the intervals at the listed negative indices have been
   included in the interpretation. (i.e. do not include a b7 in the interpretation if a maj 7 has already been identified--there can only be one 7)
   
-  Positive indices indicate that this degree should not be used in the interpretation if any of the degrees at the listed positive indices have NOT been
+  Positive indices indicate that this interval should not be used in the interpretation if any of the intervals at the listed positive indices have NOT been
   included in the interpretation. (i.e. a bb7 requires the full rest of the diminished chord (b3 and b5) to be interpreted as such and not otherwise as a 13)
 */
 static final int[][] constraints = {
@@ -78,7 +78,7 @@ int[][] unlikelyExtensions = {
 // This is how scoring works.
 // INTERVAL_WEIGHTS assigns weights to the relative importance of each interval's presence in an interpretation
 float[] INTERVAL_WEIGHTS = {
-  0,    // root weight
+  -0.25,    // root weight
   1,    // third weight
   0.25,    // fifth weight
   1,    // seventh weight
@@ -87,7 +87,7 @@ float[] INTERVAL_WEIGHTS = {
   0.5     // thirteenth weight
 };
 
-// convert an index in this.degrees to an index in {1, 3, 5, ...}
+// convert an index in this.intervals to an index in {1, 3, 5, ...}
 int convertIntervalIndex(int i) {
   // third
   if (i == 1 || i == 2) {
@@ -122,7 +122,7 @@ int convertIntervalIndex(int i) {
 class Interpretation {
   
   String root;  // letter of the root
-  int[] degrees = new int[17];  // various scale degrees and their frequencies
+  int[] intervals = new int[17];  // various intervals and their frequencies
   String chordQuality;  // i.e. "maj7", "dim"
   float score;  // metric used to rank interpretations against each other
   
@@ -135,11 +135,11 @@ class Interpretation {
     this.generateInterVec(rootIndex, tones);
   }
   
-  // fill out the interpretation vector for given tones based on the root this interpretation is using (modifies this.degrees)
+  // fill out the interpretation vector for given tones based on the root this interpretation is using (modifies this.intervals)
   void generateInterVec(int rootIndex, int[] tones) {
     // for each possible degree
-    for (int i = 0; i < this.degrees.length; i++) {
-      int j = (rootIndex + degreeOffsets[i]) % 12;  // find what tone corresponds with this degree
+    for (int i = 0; i < this.intervals.length; i++) {
+      int j = (rootIndex + intervalOffsets[i]) % 12;  // find what tone corresponds with this degree
       
       // if this is an active tone
       if (tones[j] > 0) {
@@ -148,7 +148,7 @@ class Interpretation {
         // for each constraint on this degree
         for (int c : constraints[i]) {
           // if fails positive or negative constraint
-          if ((c < 0 && this.degrees[Math.abs(c)] != 0) || (c > 0 && this.degrees[c] == 0)) {
+          if ((c < 0 && this.intervals[Math.abs(c)] != 0) || (c > 0 && this.intervals[c] == 0)) {
             violates = true;
             break;
           }
@@ -156,7 +156,7 @@ class Interpretation {
         
         // if passed all constraints, accept interpretation
         if (!violates) {
-          this.degrees[i] = tones[j];
+          this.intervals[i] = tones[j];
         }
       }
     }
@@ -169,8 +169,8 @@ class Interpretation {
     
     // for the remaining extensions, simply add their degree names
     for (int i = 9; i < 17; i++) {
-      if (this.degrees[i] > 0) {
-        ext += " " + degreeNames[i];
+      if (this.intervals[i] > 0) {
+        ext += " " + intervalNames[i];
       }
     }
 
@@ -181,11 +181,11 @@ class Interpretation {
   String getChordQuality() {
     if (this.chordQuality == null) {
       // if has b7
-      if (this.degrees[4] > 0) {
+      if (this.intervals[4] > 0) {
         // if has b3
-        if (this.degrees[2] > 0) {
+        if (this.intervals[2] > 0) {
           // if has b5
-          if (this.degrees[6] > 0) {
+          if (this.intervals[6] > 0) {
             this.chordQuality = "-7b5";  // half diminished
           } else {
             this.chordQuality = "-7";  // minor seventh
@@ -195,26 +195,26 @@ class Interpretation {
         }
         
       // otherwise if has maj7
-      } else if (this.degrees[3] > 0) {
+      } else if (this.intervals[3] > 0) {
         // if has b3
-        if (this.degrees[2] > 0) {
+        if (this.intervals[2] > 0) {
           this.chordQuality = "-Δ7";  // minor major seventh
-        } else if (this.degrees[7] > 0) {
+        } else if (this.intervals[7] > 0) {
           this.chordQuality = "+Δ7";  // augmented major seventh
         } else {
           this.chordQuality = "Δ7";  // major seventh
         }
         
       // otherwise if has b5
-      } else if (this.degrees[6] > 0) {
+      } else if (this.intervals[6] > 0) {
         this.chordQuality = "dim";  // diminished
       
       // otherwise if has #5
-      } else if (this.degrees[7] > 0) {
+      } else if (this.intervals[7] > 0) {
         this.chordQuality = "+";  // augmented
         
       // otherwise if has b3
-      } else if (this.degrees[2] > 0) {
+      } else if (this.intervals[2] > 0) {
         this.chordQuality = "-";  // minor
       
       // if none of these features are identified, we can't say anything specific about chord quality
@@ -230,12 +230,13 @@ class Interpretation {
   float getScore() {
     this.score = 0;
     
+    // start determining interval presences by assuming all intervals are absent (represented by -1)
     int[] intervalPresences = new int[7];
     Arrays.fill(intervalPresences, -1);
     
     // determine whether or not each interval is present
-    for (int i = 0; i < this.degrees.length; i++) {
-      if (this.degrees[i] > 0) {
+    for (int i = 0; i < this.intervals.length; i++) {
+      if (this.intervals[i] > 0) {
         intervalPresences[convertIntervalIndex(i)] = 1;
       }
     }
@@ -264,7 +265,7 @@ class Interpretation {
     
     // subtract one for every unlikely extension that appears in this interpretation
     for (int i = 0; i < ext.length; i++) {
-      if (this.degrees[ext[i]] > 0) {
+      if (this.intervals[ext[i]] > 0) {
         this.score--;
       }
     }
@@ -281,8 +282,8 @@ class Interpretation {
   // log interpretation vector in human-readable format
   void logInterpretation() {
     println("Root: " + this.root);
-    for (int i = 0; i < this.degrees.length; i++) {
-      println(degreeNames[i] + ": " + this.degrees[i]);
+    for (int i = 0; i < this.intervals.length; i++) {
+      println(intervalNames[i] + ": " + this.intervals[i]);
     }
     println("");
   }
