@@ -38,7 +38,7 @@ Intervals are identified in the following specific order which gives precedence 
 There are also certain logical constraints on which intervals can exist in the presence of other intervals, as follows:
 
 <p align="center">
-<img src="http://tcastleman.com/imgs/harmony-interpreter-constraints.png" width=50%>
+<img src="http://castleman.space/imgs/harmony-interpreter-constraints.png" width=50%>
 </p>
 
 When the algorithm interprets each interval, these constraints are never violated. For instance, if there is already a 3 in the interpretation, the algorithm will never interpret the note 1 semitone below this as a b3, but will instead treat it as a #9 (so as to avoid two 3rds).
@@ -49,7 +49,7 @@ When the algorithm interprets each interval, these constraints are never violate
 Once sets of intervals relative to each possible root have been identified, their musical names can be determined using the following tree.
 
 <p align="center">
-<img src="http://tcastleman.com/imgs/chord-quality-tree.png" width=80%>
+<img src="http://castleman.space/imgs/chord-quality-tree.png" width=80%>
 </p>
 
 The tree is traversed by starting at the root and proceeding to the child node whose value is an interval that is present in this interpretation, returning the current node's musical name if it is impossible to traverse to a child node. For instance, if a b7 was present, the leftmost path would be traversed, but if there were no b3 in the interpretation, then "7" would be returned as the proper chord quality.
@@ -81,4 +81,4 @@ Augmaj7: b9, #9, 11, 13, #13
 
 ### Further Reading
 
-For a more in-depth, mathematical perspective on this algorithm, check out [An Algorithm for the Interpretation of Jazz Harmony.](http://tcastleman.com/portfolio/media/An_Algorithm_for_the_Interpretation_of_Jazz_Harmony.pdf)
+For a more in-depth, mathematical perspective on this algorithm, check out [An Algorithm for the Interpretation of Jazz Harmony.](http://castleman.space/portfolio/media/An_Algorithm_for_the_Interpretation_of_Jazz_Harmony.pdf)
