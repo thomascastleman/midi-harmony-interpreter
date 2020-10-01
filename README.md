@@ -81,4 +81,4 @@ Augmaj7: b9, #9, 11, 13, #13
 
 ### Further Reading
 
-For a more in-depth, mathematical perspective on this algorithm, check out [An Algorithm for the Interpretation of Jazz Harmony.](http://castleman.space/portfolio/media/An_Algorithm_for_the_Interpretation_of_Jazz_Harmony.pdf)
+For a more in-depth, mathematical perspective on this algorithm, check out [An Algorithm for the Interpretation of Jazz Harmony.](http://castleman.space/projects/assets/writing/An_Algorithm_for_the_Interpretation_of_Jazz_Harmony.pdf)
